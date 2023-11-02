@@ -601,12 +601,12 @@ class window_update(QWidget):  # 增加更新页面（Check for Updates）
 		self.lbl2 = QLabel('', self)
 		self.lbl2.move(122, 15)
 
-		bt1 = QPushButton('Github', self)
+		bt1 = QPushButton('Google Drive', self)
 		bt1.setFixedWidth(120)
 		bt1.clicked.connect(self.upd)
 		bt1.move(150, 75)
 
-		bt2 = QPushButton('Google Drive', self)
+		bt2 = QPushButton('Baidu Netdisk', self)
 		bt2.setFixedWidth(120)
 		bt2.clicked.connect(self.upd2)
 		bt2.move(150, 105)
