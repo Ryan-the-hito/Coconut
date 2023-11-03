@@ -3,7 +3,7 @@
 
 block_cipher = None
 
-__version__ = '0.0.1'
+__version__ = '0.0.2'
 
 info_plist = {
     'LSUIElement': True,
@@ -14,7 +14,7 @@ a = Analysis(
     ['Coconut.py'],
     pathex=['/Users/ryanshenefield/Downloads/Coconut.py'],
     binaries=[],
-    datas=[('Coconut-logo.icns', '.'), ('Coconut-dsk.icns', '.'), ('Coconut-logo.png', '.'), ('wechat50.png', '.'), ('wechat20.png', '.'), ('wechat10.png', '.'), ('wechat5.png', '.'), ('alipay50.png', '.'), ('alipay20.png', '.'), ('alipay10.png', '.'), ('alipay5.png', '.'), ('Photos_NAME.txt', '.'), ('SetTime.txt', '.')],
+    datas=[('Coconut-logo.icns', '.'), ('Coconut-dsk.icns', '.'), ('Coconut-logo.png', '.'), ('wechat50.png', '.'), ('wechat20.png', '.'), ('wechat10.png', '.'), ('wechat5.png', '.'), ('alipay50.png', '.'), ('alipay20.png', '.'), ('alipay10.png', '.'), ('alipay5.png', '.'), ('Photos_NAME.txt', '.'), ('SetTime.txt', '.'), ('ReLa.txt', '.')],
     hiddenimports=['subprocess', 'AppKit'],
     hookspath=[],
     hooksconfig={},

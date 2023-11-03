@@ -24,6 +24,7 @@ import re
 import os
 import shutil
 from pathlib import Path
+import time
 try:
 	from AppKit import NSWorkspace
 except ImportError:
@@ -70,7 +71,6 @@ menu.addSeparator()
 
 # Add a Quit option to the menu.
 quit = QAction("Quit")
-quit.triggered.connect(app.quit)
 menu.addAction(quit)
 
 # Add the menu to the tray
@@ -126,7 +126,7 @@ class window_about(QWidget):  # 增加说明页面(About)
 		widg2.setLayout(blay2)
 
 		widg3 = QWidget()
-		lbl1 = QLabel('Version 0.0.1', self)
+		lbl1 = QLabel('Version 0.0.2', self)
 		blay3 = QHBoxLayout()
 		blay3.setContentsMargins(0, 0, 0, 0)
 		blay3.addStretch()
@@ -589,7 +589,7 @@ class window_update(QWidget):  # 增加更新页面（Check for Updates）
 
 	def initUI(self):  # 说明页面内信息
 
-		self.lbl = QLabel('Current Version: v0.0.1', self)
+		self.lbl = QLabel('Current Version: v0.0.2', self)
 		self.lbl.move(30, 45)
 
 		lbl0 = QLabel('Download Update:', self)
@@ -689,6 +689,7 @@ class window3(QWidget):  # 主窗口
 	def __init__(self):
 		super().__init__()
 		self.initUI()
+		self.ReLa()
 	
 	def initUI(self):
 		self.mytimer = QTimer(self)
@@ -865,6 +866,13 @@ class window3(QWidget):  # 主窗口
 		if not action3.isChecked():
 			self.mytimer.stop()
 
+	def ReLa(self):
+		ReLa = codecs.open(BasePath + "ReLa.txt", 'r', encoding='utf-8').read()
+		if ReLa == '1':
+			action3.setChecked(True)
+			SetTime = int(codecs.open(BasePath + 'SetTime.txt', 'r', encoding='utf-8').read())
+			self.mytimer.start(60000 * SetTime)
+
 	def keyPressEvent(self, e):  # 当页面显示的时候，按下esc键可关闭窗口
 		if e.key() == Qt.Key.Key_Escape.value:
 			self.close()
@@ -993,6 +1001,11 @@ class window4(QWidget):  # Customization settings
 				fj = fj[0:41] + '...'
 			self.lbl0.setText(fj)
 			self.lbl0.adjustSize()
+
+	def totalquit(self):
+		with open(BasePath + "ReLa.txt", 'w', encoding='utf-8') as f0:
+			f0.write('0')
+		sys.exit(0)
 	
 	def center(self):  # 设置窗口居中
 		qr = self.frameGeometry()
@@ -1123,18 +1136,33 @@ style_sheet_ori = '''
 '''
 
 if __name__ == '__main__':
-	w1 = window_about()  # about
-	w2 = window_update()  # update
-	w3 = window3()  # main1
-	w3.setAutoFillBackground(True)
-	p = w3.palette()
-	p.setColor(w3.backgroundRole(), QColor('#ECECEC'))
-	w3.setPalette(p)
-	w4 = window4()  # CUSTOMIZING
-	action1.triggered.connect(w1.activate)
-	action2.triggered.connect(w2.activate)
-	action3.triggered.connect(w3.activate)
-	action7.triggered.connect(w4.activate)
-	btna4.triggered.connect(w3.activate)
-	app.setStyleSheet(style_sheet_ori)
-	app.exec()
+	while True:
+		try:
+			w1 = window_about()  # about
+			w2 = window_update()  # update
+			w3 = window3()  # main1
+			w3.setAutoFillBackground(True)
+			p = w3.palette()
+			p.setColor(w3.backgroundRole(), QColor('#ECECEC'))
+			w3.setPalette(p)
+			w4 = window4()  # CUSTOMIZING
+			action1.triggered.connect(w1.activate)
+			action2.triggered.connect(w2.activate)
+			action3.triggered.connect(w3.activate)
+			action7.triggered.connect(w4.activate)
+			btna4.triggered.connect(w3.activate)
+			quit.triggered.connect(w4.totalquit)
+			app.setStyleSheet(style_sheet_ori)
+			app.exec()
+		except Exception as e:
+			# 发生异常时打印错误信息
+			p = "程序发生异常:" + str(e)
+			with open(BasePath + "Error.txt", 'w', encoding='utf-8') as f0:
+				f0.write(p)
+			# 延时一段时间后重新启动程序（例如延时 5 秒）
+			time.sleep(5)
+			# 重启后的操作
+			with open(BasePath + "ReLa.txt", 'w', encoding='utf-8') as f0:
+				f0.write('1')
+			# 使用 os.execv() 在当前进程中启动自身，实现自动重启
+			os.execv(sys.executable, [sys.executable, __file__])
