@@ -44,7 +44,7 @@ Coconut 是付费软件，只需 $5，可以点击[这个连接](https://www.buy
 
 ## 下载安装
 
-从 [Releases](https://github.com/Ryan-the-hito/Coconut/releases) 中下载最新版本，然后将解压后的 .app 文件拖入程序文件夹。
+从 [Releases](https://github.com/Ryan-the-hito/Coconut/releases) 中购买，然后下载最新版本，接着将解压后的 .app 文件拖入程序文件夹。
 
 ## 使用说明
 
