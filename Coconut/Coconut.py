@@ -25,6 +25,8 @@ import os
 import shutil
 from pathlib import Path
 import time
+from datetime import datetime
+import filetype
 try:
 	from AppKit import NSWorkspace
 except ImportError:
@@ -126,7 +128,7 @@ class window_about(QWidget):  # 增加说明页面(About)
 		widg2.setLayout(blay2)
 
 		widg3 = QWidget()
-		lbl1 = QLabel('Version 0.0.2', self)
+		lbl1 = QLabel('Version 1.0.0', self)
 		blay3 = QHBoxLayout()
 		blay3.setContentsMargins(0, 0, 0, 0)
 		blay3.addStretch()
@@ -589,7 +591,7 @@ class window_update(QWidget):  # 增加更新页面（Check for Updates）
 
 	def initUI(self):  # 说明页面内信息
 
-		self.lbl = QLabel('Current Version: v0.0.2', self)
+		self.lbl = QLabel('Current Version: v1.0.0', self)
 		self.lbl.move(30, 45)
 
 		lbl0 = QLabel('Download Update:', self)
@@ -705,7 +707,7 @@ class window3(QWidget):  # 主窗口
 		active_app = NSWorkspace.sharedWorkspace().activeApplication()
 		if active_app['NSApplicationName'] != 'loginwindow':
 			# main code
-			mail_name = codecs.open(BasePath + 'Photos_NAME.txt', 'r', encoding='utf-8').read()
+			photos_name = codecs.open(BasePath + 'Photos_NAME.txt', 'r', encoding='utf-8').read()
 			signal.signal(signal.SIGALRM, self.timeout_handler)
 			signal.alarm(60)
 			try:
@@ -725,6 +727,10 @@ class window3(QWidget):  # 主窗口
 					donedir = os.path.join(cont, donefolder)
 					if not os.path.exists(donedir):
 						os.mkdir(donedir)
+					errorfolder = "CoconutError"
+					errordir = os.path.join(cont, errorfolder)
+					if not os.path.exists(errordir):
+						os.mkdir(errordir)
 					self.list_dir = os.listdir(cont)
 					self.list_dir.sort()
 					while '.DS_Store' in self.list_dir:
@@ -733,14 +739,42 @@ class window3(QWidget):  # 主窗口
 						self.list_dir.remove('')
 					while 'CoconutDone' in self.list_dir:
 						self.list_dir.remove('CoconutDone')
+					while 'CoconutError' in self.list_dir:
+						self.list_dir.remove('CoconutError')
 					Endlist = []
 					SuccessImport = 0
+					Relist = 0
+					if self.list_dir != [] and len(self.list_dir) > 0:
+						for x in range(len(self.list_dir)):
+							TestName = os.path.join(cont, self.list_dir[x])
+							detected_type = filetype.guess(TestName)
+							if detected_type is not None and detected_type.mime.startswith('image/'):
+								pass
+							else:
+								shutil.move(TestName, errordir)
+								Relist = 1
+						if Relist == 1:
+							self.list_dir = os.listdir(cont)
+							self.list_dir.sort()
+							while '.DS_Store' in self.list_dir:
+								self.list_dir.remove('.DS_Store')
+							while '' in self.list_dir:
+								self.list_dir.remove('')
+							while 'CoconutDone' in self.list_dir:
+								self.list_dir.remove('CoconutDone')
+							while 'CoconutError' in self.list_dir:
+								self.list_dir.remove('CoconutError')
 					if self.list_dir != [] and len(self.list_dir) > 0:
 						if len(self.list_dir) == 1:
+							current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S %f')
+							file_extension = os.path.splitext(self.list_dir[0])[1]
+							newname = 'CoconutSync ' + current_time + file_extension
+							NewName = os.path.join(cont, newname)
 							EndName = os.path.join(cont, self.list_dir[0])
-							Endlist.append(EndName)
+							os.rename(EndName, NewName)
+							Endlist.append(NewName)
 							importcmd = '''
-								tell application "Photos"
+								tell application "%s"
 									get count of media items
 									set olditems to count of media items
 									import POSIX file "%s"
@@ -751,15 +785,20 @@ class window3(QWidget):  # 主窗口
 										get count of media items
 										set newitems to count of media items
 									end repeat
-								end tell''' % Endlist[0]
+								end tell''' % (photos_name, Endlist[0])
 							subprocess.call(['osascript', '-e', importcmd])
 							SuccessImport = 1
 						if len(self.list_dir) == 2:
 							for i in range(2):
+								current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S %f')
+								file_extension = os.path.splitext(self.list_dir[i])[1]
+								newname = 'CoconutSync ' + current_time + file_extension
+								NewName = os.path.join(cont, newname)
 								EndName = os.path.join(cont, self.list_dir[i])
-								Endlist.append(EndName)
+								os.rename(EndName, NewName)
+								Endlist.append(NewName)
 							importcmd = '''
-								tell application "Photos"
+								tell application "%s"
 									get count of media items
 									set olditems to count of media items
 									import POSIX file "%s"
@@ -771,15 +810,20 @@ class window3(QWidget):  # 主窗口
 										get count of media items
 										set newitems to count of media items
 									end repeat
-								end tell''' % (Endlist[0], Endlist[1])
+								end tell''' % (photos_name, Endlist[0], Endlist[1])
 							subprocess.call(['osascript', '-e', importcmd])
 							SuccessImport = 1
 						if len(self.list_dir) == 3:
 							for i in range(3):
+								current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S %f')
+								file_extension = os.path.splitext(self.list_dir[i])[1]
+								newname = 'CoconutSync ' + current_time + file_extension
+								NewName = os.path.join(cont, newname)
 								EndName = os.path.join(cont, self.list_dir[i])
-								Endlist.append(EndName)
+								os.rename(EndName, NewName)
+								Endlist.append(NewName)
 							importcmd = '''
-								tell application "Photos"
+								tell application "%s"
 									get count of media items
 									set olditems to count of media items
 									import POSIX file "%s"
@@ -792,15 +836,20 @@ class window3(QWidget):  # 主窗口
 										get count of media items
 										set newitems to count of media items
 									end repeat
-								end tell''' % (Endlist[0], Endlist[1], Endlist[2])
+								end tell''' % (photos_name, Endlist[0], Endlist[1], Endlist[2])
 							subprocess.call(['osascript', '-e', importcmd])
 							SuccessImport = 1
 						if len(self.list_dir) == 4:
 							for i in range(4):
+								current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S %f')
+								file_extension = os.path.splitext(self.list_dir[i])[1]
+								newname = 'CoconutSync ' + current_time + file_extension
+								NewName = os.path.join(cont, newname)
 								EndName = os.path.join(cont, self.list_dir[i])
-								Endlist.append(EndName)
+								os.rename(EndName, NewName)
+								Endlist.append(NewName)
 							importcmd = '''
-								tell application "Photos"
+								tell application "%s"
 									get count of media items
 									set olditems to count of media items
 									import POSIX file "%s"
@@ -814,15 +863,20 @@ class window3(QWidget):  # 主窗口
 										get count of media items
 										set newitems to count of media items
 									end repeat
-								end tell''' % (Endlist[0], Endlist[1], Endlist[2], Endlist[3])
+								end tell''' % (photos_name, Endlist[0], Endlist[1], Endlist[2], Endlist[3])
 							subprocess.call(['osascript', '-e', importcmd])
 							SuccessImport = 1
 						if len(self.list_dir) >= 5:
 							for i in range(5):
+								current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S %f')
+								file_extension = os.path.splitext(self.list_dir[i])[1]
+								newname = 'CoconutSync ' + current_time + file_extension
+								NewName = os.path.join(cont, newname)
 								EndName = os.path.join(cont, self.list_dir[i])
-								Endlist.append(EndName)
+								os.rename(EndName, NewName)
+								Endlist.append(NewName)
 							importcmd = '''
-								tell application "Photos"
+								tell application "%s"
 									get count of media items
 									set olditems to count of media items
 									import POSIX file "%s"
@@ -837,7 +891,7 @@ class window3(QWidget):  # 主窗口
 										get count of media items
 										set newitems to count of media items
 									end repeat
-								end tell''' % (Endlist[0], Endlist[1], Endlist[2], Endlist[3], Endlist[4])
+								end tell''' % (photos_name, Endlist[0], Endlist[1], Endlist[2], Endlist[3], Endlist[4])
 							subprocess.call(['osascript', '-e', importcmd])
 							SuccessImport = 1
 						if SuccessImport == 1:
@@ -850,7 +904,9 @@ class window3(QWidget):  # 主窗口
 				end run'''
 				self.notify(CMD, "Finder-iCloud Photo Synchronizer",
 							f"There seems to be an error. Please try again.")
-			except Exception:
+			except Exception as e:
+				with open(BasePath + 'errorfile.txt', 'w', encoding='utf-8') as f0:
+					f0.write(str(e))
 				CMD = '''
 				on run argv
 					display notification (item 2 of argv) with title (item 1 of argv)
